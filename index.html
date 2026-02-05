@@ -75,14 +75,20 @@
             margin-bottom: 20px;
         }
         
+        .album-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
         .card-container {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            transition: transform 0.3s ease;
         }
         
         .card {
-            width: 100%;
+            min-width: 100%;
             background-color: white;
             border-top: 3px solid #2196F3;
             border-radius: 5px;
@@ -91,6 +97,43 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             max-height: 600px;
             overflow: hidden;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .page-info {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .page-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .page-btn {
+            padding: 8px 16px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .page-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .page-btn:disabled {
+            background-color: #f9f9f9;
+            color: #ccc;
+            cursor: not-allowed;
         }
         
         .card.blue {
@@ -282,17 +325,26 @@
         
         <div class="card-preview">
             <h2 style="font-size: 18px; margin-bottom: 15px; color: #333;">卡片预览</h2>
-            <div class="card-container" id="cardContainer">
-                <div class="card">
-                    <div class="card-meta">
-                        <div class="card-date">📅 2026年2月5日</div>
+            <div class="album-container">
+                <div class="card-container" id="cardContainer">
+                    <div class="card">
+                        <div class="card-meta">
+                            <div class="card-date">📅 2026年2月5日</div>
+                        </div>
+                        <div class="card-content">
+                            在阅读叔本华的《人生的智慧》时，我深刻地意识到，幸福并非来自外在的拥有，而是源于内心的平静与满足。我们常常追逐那些看似重要的事物，却忽略了生命中最本质的东西。
+                            <br><br>
+                            古希腊哲学家苏格拉底说："未经审视的人生不值得过。"这句话提醒我们要时常反思，保持清醒的自我认知。当我们懂得欣赏简单的美好，学会在平凡中发现意义，生活便会变得充实而富有诗意。
+                        </div>
+                        <div class="card-divider">✦ ✦ ✦</div>
                     </div>
-                    <div class="card-content">
-                        在阅读叔本华的《人生的智慧》时，我深刻地意识到，幸福并非来自外在的拥有，而是源于内心的平静与满足。我们常常追逐那些看似重要的事物，却忽略了生命中最本质的东西。
-                        <br><br>
-                        古希腊哲学家苏格拉底说："未经审视的人生不值得过。"这句话提醒我们要时常反思，保持清醒的自我认知。当我们懂得欣赏简单的美好，学会在平凡中发现意义，生活便会变得充实而富有诗意。
-                    </div>
-                    <div class="card-divider">✦ ✦ ✦</div>
+                </div>
+            </div>
+            <div class="pagination">
+                <div class="page-info" id="pageInfo">第 1 页，共 1 页</div>
+                <div class="page-controls">
+                    <button class="page-btn" id="prevBtn" disabled>上一页</button>
+                    <button class="page-btn" id="nextBtn" disabled>下一页</button>
                 </div>
             </div>
         </div>
@@ -302,6 +354,7 @@
         </div>
     </div>
     
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const inputText = document.getElementById('inputText');
@@ -309,8 +362,13 @@
             const cardContainer = document.getElementById('cardContainer');
             const saveBtn = document.getElementById('saveBtn');
             const styleOptions = document.querySelectorAll('.style-option');
+            const pageInfo = document.getElementById('pageInfo');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
             
             let currentStyle = 'blue';
+            let currentPage = 0;
+            let totalPages = 0;
             
             // 加载保存的内容和样式
             function loadSavedData() {
@@ -395,13 +453,16 @@
                 
                 // 清空容器
                 cardContainer.innerHTML = '';
+                currentPage = 0;
                 
                 if (!text) {
+                    updatePagination();
                     return;
                 }
                 
                 // 分割内容
                 const chunks = splitContent(text);
+                totalPages = chunks.length;
                 
                 // 生成卡片
                 chunks.forEach((chunk, index) => {
@@ -409,14 +470,43 @@
                     card.className = `card ${currentStyle}`;
                     card.innerHTML = `
                         <div class="card-meta">
-                            <div class="card-date">📅 ${getCurrentDate()}</div>
+                            <div class="card-date">${getCurrentDate()}</div>
                         </div>
                         <div class="card-content">${chunk}</div>
                         <div class="card-divider">✦ ✦ ✦</div>
                     `;
                     cardContainer.appendChild(card);
                 });
+                
+                // 更新分页
+                updatePagination();
             }
+            
+            // 更新分页信息
+            function updatePagination() {
+                pageInfo.textContent = `第 ${currentPage + 1} 页，共 ${totalPages} 页`;
+                prevBtn.disabled = currentPage === 0;
+                nextBtn.disabled = currentPage >= totalPages - 1;
+                
+                // 更新卡片容器位置
+                cardContainer.style.transform = `translateX(-${currentPage * 100}%)`;
+            }
+            
+            // 上一页
+            prevBtn.addEventListener('click', function() {
+                if (currentPage > 0) {
+                    currentPage--;
+                    updatePagination();
+                }
+            });
+            
+            // 下一页
+            nextBtn.addEventListener('click', function() {
+                if (currentPage < totalPages - 1) {
+                    currentPage++;
+                    updatePagination();
+                }
+            });
             
             // 生成卡片
             generateBtn.addEventListener('click', generateCards);
@@ -445,7 +535,27 @@
             
             // 保存卡片
             saveBtn.addEventListener('click', function() {
-                alert('请截屏保存卡片图片');
+                const cards = document.querySelectorAll('.card');
+                
+                cards.forEach((card, index) => {
+                    html2canvas(card, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#ffffff'
+                    }).then(canvas => {
+                        // 将canvas转换为图片
+                        const image = canvas.toDataURL('image/png');
+                        
+                        // 创建下载链接
+                        const link = document.createElement('a');
+                        link.download = `card_${index + 1}_${getCurrentDate().replace(/[年月]/g, '-').replace(/日/g, '')}.png`;
+                        link.href = image;
+                        link.click();
+                    }).catch(error => {
+                        console.error('保存失败:', error);
+                        alert('保存失败，请重试');
+                    });
+                });
             });
         });
     </script>
