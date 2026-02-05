@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>朋友圈卡片生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .input-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: none;
+            font-family: inherit;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .card-preview {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .card {
+            width: 100%;
+            background-color: white;
+            border-top: 3px solid #ff7f50;
+            border-radius: 5px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-height: 600px;
+            overflow: hidden;
+        }
+        
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .card-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .card-category {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .card-quote {
+            background-color: #f9f9f9;
+            border-left: 4px solid #ff7f50;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #555;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .card-content {
+            font-size: 16px;
+            color: #444;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        
+        .card-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .card-tag {
+            padding: 6px 12px;
+            background-color: #f0f0f0;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .card-divider {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            color: #ccc;
+        }
+        
+        .card-book {
+            position: relative;
+            height: 80px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .card-book::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-image: linear-gradient(to right, #e0e0e0 1px, transparent 1px),
+                              linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+        }
+        
+        .save-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .save-button {
+            padding: 12px 24px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .save-button:hover {
+            background-color: #0b7dda;
+        }
+        
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .card-content {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>朋友圈卡片生成器</h1>
+        
+        <div class="input-section">
+            <textarea id="inputText" placeholder="请输入要生成卡片的文本...\n\n内容变化时会自动生成卡片"></textarea>
+            <button id="generateBtn">生成卡片</button>
+        </div>
+        
+        <div class="card-preview">
+            <h2 style="font-size: 18px; margin-bottom: 15px; color: #333;">卡片预览</h2>
+            <div class="card-container" id="cardContainer">
+                <div class="card">
+                    <div class="card-meta">
+                        <div class="card-date">📅 2026年2月5日</div>
+                    </div>
+                    <div class="card-content">
+                        在阅读叔本华的《人生的智慧》时，我深刻地意识到，幸福并非来自外在的拥有，而是源于内心的平静与满足。我们常常追逐那些看似重要的事物，却忽略了生命中最本质的东西。
+                        <br><br>
+                        古希腊哲学家苏格拉底说："未经审视的人生不值得过。"这句话提醒我们要时常反思，保持清醒的自我认知。当我们懂得欣赏简单的美好，学会在平凡中发现意义，生活便会变得充实而富有诗意。
+                    </div>
+                    <div class="card-divider">✦ ✦ ✦</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="save-section">
+            <button class="save-button" id="saveBtn">保存卡片</button>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputText = document.getElementById('inputText');
+            const generateBtn = document.getElementById('generateBtn');
+            const cardContainer = document.getElementById('cardContainer');
+            const saveBtn = document.getElementById('saveBtn');
+            
+            // 加载保存的内容
+            function loadSavedContent() {
+                const savedContent = localStorage.getItem('cardContent');
+                if (savedContent) {
+                    inputText.value = savedContent;
+                    generateCards(); // 加载后自动生成卡片
+                }
+            }
+            
+            // 保存内容到本地缓存
+            function saveContent(content) {
+                localStorage.setItem('cardContent', content);
+            }
+            
+            // 生成当前日期
+            function getCurrentDate() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = now.getMonth() + 1;
+                const day = now.getDate();
+                return `${year}年${month}月${day}日`;
+            }
+            
+            // 分割文本内容
+            function splitContent(content, maxHeight = 600) {
+                const contentText = content.trim();
+                
+                // 按段落（换行符）分割内容
+                const paragraphs = contentText.split('\n').filter(p => p.trim());
+                const chunks = [];
+                
+                paragraphs.forEach(paragraph => {
+                    const testElement = document.createElement('div');
+                    testElement.style.fontSize = '16px';
+                    testElement.style.lineHeight = '1.8';
+                    testElement.style.padding = '30px';
+                    testElement.style.visibility = 'hidden';
+                    testElement.style.position = 'absolute';
+                    testElement.innerHTML = `<div class="card-meta">
+                        <div class="card-date">📅 ${getCurrentDate()}</div>
+                        <div class="card-category">🔍 哲学思考</div>
+                    </div>
+                    <div class="card-content">${paragraph}</div>
+                    <div class="card-tags">
+                        <div class="card-tag">随笔</div>
+                        <div class="card-tag">阅读笔记</div>
+                    </div>
+                    <div class="card-divider">✦ ✦ ✦</div>
+                    <div class="card-book"></div>`;
+                    document.body.appendChild(testElement);
+                    
+                    const height = testElement.offsetHeight;
+                    document.body.removeChild(testElement);
+                    
+                    if (height <= maxHeight) {
+                        chunks.push(paragraph);
+                    } else {
+                        // 如果段落过长，按句号分割
+                        const sentences = paragraph.split('。').filter(s => s.trim());
+                        let currentChunk = '';
+                        
+                        sentences.forEach(sentence => {
+                            const testChunk = currentChunk + sentence + '。';
+                            const testElement = document.createElement('div');
+                            testElement.style.fontSize = '16px';
+                            testElement.style.lineHeight = '1.8';
+                            testElement.style.padding = '30px';
+                            testElement.style.visibility = 'hidden';
+                            testElement.style.position = 'absolute';
+                            testElement.innerHTML = `<div class="card-meta">
+                                <div class="card-date">📅 ${getCurrentDate()}</div>
+                                <div class="card-category">🔍 哲学思考</div>
+                            </div>
+                            <div class="card-content">${testChunk}</div>
+                            <div class="card-tags">
+                                <div class="card-tag">随笔</div>
+                                <div class="card-tag">阅读笔记</div>
+                            </div>
+                            <div class="card-divider">✦ ✦ ✦</div>
+                            <div class="card-book"></div>`;
+                            document.body.appendChild(testElement);
+                            
+                            const height = testElement.offsetHeight;
+                            document.body.removeChild(testElement);
+                            
+                            if (height <= maxHeight) {
+                                currentChunk = testChunk;
+                            } else {
+                                if (currentChunk) {
+                                    chunks.push(currentChunk);
+                                }
+                                currentChunk = sentence + '。';
+                            }
+                        });
+                        
+                        if (currentChunk) {
+                            chunks.push(currentChunk);
+                        }
+                    }
+                });
+                
+                return chunks;
+            }
+            
+            // 生成卡片
+            function generateCards() {
+                const text = inputText.value.trim();
+                
+                // 清空容器
+                cardContainer.innerHTML = '';
+                
+                if (!text) {
+                    return;
+                }
+                
+                // 分割内容
+                const chunks = splitContent(text);
+                
+                // 生成卡片
+                chunks.forEach((chunk, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="card-meta">
+                            <div class="card-date">📅 ${getCurrentDate()}</div>
+                        </div>
+                        <div class="card-content">${chunk}</div>
+                        <div class="card-divider">✦ ✦ ✦</div>
+                    `;
+                    cardContainer.appendChild(card);
+                });
+            }
+            
+            // 生成卡片
+            generateBtn.addEventListener('click', generateCards);
+            
+            // 文本内容变化时自动生成卡片并保存
+            let timeoutId;
+            inputText.addEventListener('input', function() {
+                const content = this.value;
+                saveContent(content);
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(generateCards, 500);
+            });
+            
+            // 初始化加载保存的内容
+            loadSavedContent();
+            
+            // 保存卡片
+            saveBtn.addEventListener('click', function() {
+                alert('请截屏保存卡片图片');
+            });
+        });
+    </script>
+</body>
+</html>
