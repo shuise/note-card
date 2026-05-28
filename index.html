@@ -96,49 +96,9 @@
         
         .petal {
             position: absolute;
-            width: 20px;
-            height: 12px;
             background: radial-gradient(ellipse at center, #f4a0a0 0%, #e88080 100%);
             border-radius: 50% 50% 50% 0;
-            opacity: 0.6;
-            transform: rotate(-30deg);
             pointer-events: none;
-        }
-        
-        .petal:nth-child(1) {
-            top: 6%;
-            right: 10%;
-            transform: rotate(35deg);
-            width: 26px;
-            height: 15px;
-            opacity: 0.7;
-        }
-        
-        .petal:nth-child(2) {
-            top: 32%;
-            right: 3%;
-            transform: rotate(-15deg);
-            width: 18px;
-            height: 11px;
-            opacity: 0.5;
-        }
-        
-        .petal:nth-child(3) {
-            top: 52%;
-            left: 50%;
-            transform: rotate(50deg);
-            width: 20px;
-            height: 12px;
-            opacity: 0.45;
-        }
-        
-        .petal:nth-child(4) {
-            bottom: 30%;
-            left: 12%;
-            transform: rotate(-40deg);
-            width: 16px;
-            height: 10px;
-            opacity: 0.5;
         }
         
         .pagination {
@@ -276,6 +236,7 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            opacity: 0;
         }
         
         .card-category {
@@ -450,7 +411,6 @@
         </div>
         
         <div class="card-preview">
-            <h2 style="font-size: 18px; margin-bottom: 15px; color: #333;">卡片预览</h2>
             <div class="album-container">
                 <div class="card-container" id="cardContainer">
                     <div class="card blue">
@@ -458,11 +418,9 @@
                         <div class="petal"></div>
                         <div class="petal"></div>
                         <div class="petal"></div>
-                        <div class="card-title">安妮普鲁《俄怀明故事》</div>
+                        <div class="card-title"></div>
                         <div class="card-content">
-                            劲风如长柄大镰刀，刮出怀俄明风格的咆哮。
-                            <br><br>
-                            有位来自蒙大拿州的年轻牛仔，略略爱慕虚荣，舍弃大衣与大手套，将所有薪水投资在手工打造的精品皮靴上。他越过州界南下怀俄明，认为越往南走天气会越暖和，不料当晚他冻死在保德河酷寒的西岸，其广度与流向众所周知。深一英寸，宽一英里，由得克萨斯往北流来。
+                            
                         </div>
                         <div class="card-date">二零二四年 九月 三日</div>
                         <div class="card-number">1</div>
@@ -627,12 +585,23 @@
                 chunks.forEach((chunk, index) => {
                     const card = document.createElement('div');
                     card.className = `card ${currentStyle}`;
+                    
+                    // 生成随机位置的花瓣
+                    let petalHTML = '';
+                    for (let i = 0; i < 4; i++) {
+                        const top = Math.random() * 60 + 5;
+                        const left = Math.random() * 80 + 5;
+                        const rotate = Math.random() * 180 - 90;
+                        const width = Math.random() * 15 + 12;
+                        const height = Math.random() * 8 + 8;
+                        const opacity = Math.random() * 0.3 + 0.3;
+                        petalHTML += `<div class="petal" style="top:${top}%;left:${left}%;transform:rotate(${rotate}deg);width:${width}px;height:${height}px;opacity:${opacity};"></div>`;
+                    }
+                    
                     card.innerHTML = `
-                        <div class="petal"></div>
-                        <div class="petal"></div>
-                        <div class="petal"></div>
-                        <div class="petal"></div>
+                        ${petalHTML}
                         <div class="card-content">${chunk}</div>
+                        <div class="card-date">${getChineseDate()}</div>
                         <div class="card-number">${index + 1}</div>
                     `;
                     cardContainer.appendChild(card);
@@ -668,13 +637,13 @@
                 }
             });
             
-            // 文本内容变化时自动生成卡片并保存
+            // 文本内容变化时即时重新生成卡片
             let timeoutId;
             inputText.addEventListener('input', function() {
                 const content = this.value;
                 saveContent(content);
                 clearTimeout(timeoutId);
-                timeoutId = setTimeout(generateCards, 500);
+                timeoutId = setTimeout(generateCards, 200);
             });
             
             // 样式选择
@@ -708,37 +677,49 @@
                         return;
                     }
                     
-                    // 为每个卡片添加延迟下载，避免手机浏览器限制
-                    cards.forEach((card, index) => {
-                        setTimeout(() => {
-                            html2canvas(card, {
-                                scale: 2,
-                                useCORS: true,
-                                backgroundColor: '#ffffff'
-                            }).then(canvas => {
-                                // 将canvas转换为图片
-                                const image = canvas.toDataURL('image/png');
-                                
-                                // 创建下载链接
-                                const link = document.createElement('a');
-                                link.download = `card_${index + 1}_${getCurrentDate().replace(/[年月]/g, '-').replace(/日/g, '')}.png`;
-                                link.href = image;
-                                link.click();
-                                
-                                // 最后一个卡片下载完成后提示
-                                if (index === cards.length - 1) {
-                                    setTimeout(() => {
-                                        alert(`已成功下载 ${cards.length} 张卡片`);
-                                    }, 1000);
-                                }
-                            }).catch(error => {
-                                console.error('保存失败:', error);
-                                alert('保存失败，请重试');
-                            });
-                        }, index * 500); // 每个卡片延迟500ms下载
-                    });
+                    // 保存卡片到服务器
+                    saveCardsToServer(cards);
                 }, 300);
             });
+            
+            // 保存卡片到服务器
+            async function saveCardsToServer(cards) {
+                const total = cards.length;
+                
+                for (let index = 0; index < cards.length; index++) {
+                    const card = cards[index];
+                    
+                    try {
+                        const canvas = await html2canvas(card, {
+                            scale: 2,
+                            useCORS: true,
+                            backgroundColor: '#ffffff'
+                        });
+                        
+                        const imageData = canvas.toDataURL('image/png');
+                        
+                        // 发送到服务器
+                        await fetch('/api/save-card', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                imageData: imageData,
+                                index: index,
+                                total: total
+                            })
+                        });
+                        
+                    } catch (error) {
+                        console.error('保存失败:', error);
+                        alert('保存失败，请重试');
+                        return;
+                    }
+                }
+                
+                console.log(`成功保存 ${total} 张卡片到 cards 文件夹`);
+            }
         });
     </script>
 </body>
