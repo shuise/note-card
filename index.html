@@ -87,16 +87,58 @@
             transition: transform 0.3s ease;
         }
         
-        .card {
-            min-width: 100%;
-            background-color: white;
-            border-top: 3px solid #2196F3;
-            border-radius: 5px;
-            padding: 30px;
-            position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            max-height: 600px;
-            overflow: hidden;
+        @font-face {
+            font-family: 'Iansui';
+            src: url('Iansui-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        .petal {
+            position: absolute;
+            width: 20px;
+            height: 12px;
+            background: radial-gradient(ellipse at center, #f4a0a0 0%, #e88080 100%);
+            border-radius: 50% 50% 50% 0;
+            opacity: 0.6;
+            transform: rotate(-30deg);
+            pointer-events: none;
+        }
+        
+        .petal:nth-child(1) {
+            top: 6%;
+            right: 10%;
+            transform: rotate(35deg);
+            width: 26px;
+            height: 15px;
+            opacity: 0.7;
+        }
+        
+        .petal:nth-child(2) {
+            top: 32%;
+            right: 3%;
+            transform: rotate(-15deg);
+            width: 18px;
+            height: 11px;
+            opacity: 0.5;
+        }
+        
+        .petal:nth-child(3) {
+            top: 52%;
+            left: 50%;
+            transform: rotate(50deg);
+            width: 20px;
+            height: 12px;
+            opacity: 0.45;
+        }
+        
+        .petal:nth-child(4) {
+            bottom: 30%;
+            left: 12%;
+            transform: rotate(-40deg);
+            width: 16px;
+            height: 10px;
+            opacity: 0.5;
         }
         
         .pagination {
@@ -137,19 +179,23 @@
         }
         
         .card.blue {
-            border-top-color: #2196F3;
+            background-color: #f0ebe5;
+            color: #333;
         }
         
         .card.green {
-            border-top-color: #4CAF50;
+            background-color: #e8ebe5;
+            color: #333;
         }
         
         .card.orange {
-            border-top-color: #ff7f50;
+            background-color: #ebe5e0;
+            color: #333;
         }
         
         .card.purple {
-            border-top-color: #9c27b0;
+            background-color: #e5e0eb;
+            color: #333;
         }
         
         .style-selector {
@@ -177,19 +223,44 @@
         }
         
         .style-option.blue {
-            background-color: #2196F3;
+            background-color: #e8c4c4;
         }
         
         .style-option.green {
-            background-color: #4CAF50;
+            background-color: #b8d4b8;
         }
         
         .style-option.orange {
-            background-color: #ff7f50;
+            background-color: #d4a574;
         }
         
         .style-option.purple {
-            background-color: #9c27b0;
+            background-color: #c49ad6;
+        }
+        
+        .card {
+            min-width: 100%;
+            background-color: #f0ebe5;
+            border-radius: 0.4rem;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            aspect-ratio: 9/10;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: none;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
         }
         
         .card-meta {
@@ -224,10 +295,39 @@
         }
         
         .card-content {
-            font-size: 16px;
-            color: #444;
-            line-height: 1.8;
-            margin-bottom: 30px;
+            font-size: 20px;
+            color: #333;
+            line-height: 1.55;
+            margin-bottom: auto;
+            flex-grow: 1;
+            text-align: left;
+            letter-spacing: 0.5px;
+            font-family: 'Iansui', Verdana, Geneva, Tahoma, sans-serif;
+        }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111;
+            margin-bottom: 28px;
+            letter-spacing: 1px;
+            font-family: 'Iansui', Verdana, Geneva, Tahoma, sans-serif;
+        }
+        
+        .card-date {
+            font-size: 15px;
+            color: #333;
+            margin-top: auto;
+            letter-spacing: 3px;
+        }
+        
+        .card-number {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            font-size: 14px;
+            color: #999;
+            font-family: 'Iansui', Verdana, Geneva, Tahoma, sans-serif;
         }
         
         .card-tags {
@@ -245,10 +345,7 @@
         }
         
         .card-divider {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-            color: #ccc;
+            display: none;
         }
         
         .card-book {
@@ -276,33 +373,63 @@
         .save-section {
             text-align: center;
             margin-top: 20px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            padding: 16px 20px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+            z-index: 100;
         }
         
         .save-button {
-            padding: 12px 24px;
-            background-color: #2196F3;
+            padding: 14px 28px;
+            background-color: #d46a6a;
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 14px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(212, 106, 106, 0.4);
         }
         
         .save-button:hover {
-            background-color: #0b7dda;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(212, 106, 106, 0.5);
+            background-color: #c45a5a;
+        }
+        
+        .save-button:active {
+            transform: translateY(0);
         }
         
         @media screen and (max-width: 480px) {
             body {
                 padding: 10px;
+                padding-bottom: 80px;
             }
             
             .card {
-                padding: 20px;
+                padding: 36px 28px 50px 28px;
             }
             
             .card-content {
+                font-size: 15px;
+            }
+            
+            .card-title {
+                font-size: 20px;
+            }
+            
+            .save-section {
+                padding: 12px 16px;
+            }
+            
+            .save-button {
+                padding: 12px 24px;
                 font-size: 15px;
             }
         }
@@ -320,23 +447,25 @@
                 <div class="style-option purple" data-style="purple"></div>
             </div>
             <textarea id="inputText" placeholder="请输入要生成卡片的文本...\n\n内容变化时会自动生成卡片"></textarea>
-            <button id="generateBtn">生成卡片</button>
         </div>
         
         <div class="card-preview">
             <h2 style="font-size: 18px; margin-bottom: 15px; color: #333;">卡片预览</h2>
             <div class="album-container">
                 <div class="card-container" id="cardContainer">
-                    <div class="card">
-                        <div class="card-meta">
-                            <div class="card-date">📅 2026年2月5日</div>
-                        </div>
+                    <div class="card blue">
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="card-title">安妮普鲁《俄怀明故事》</div>
                         <div class="card-content">
-                            在阅读叔本华的《人生的智慧》时，我深刻地意识到，幸福并非来自外在的拥有，而是源于内心的平静与满足。我们常常追逐那些看似重要的事物，却忽略了生命中最本质的东西。
+                            劲风如长柄大镰刀，刮出怀俄明风格的咆哮。
                             <br><br>
-                            古希腊哲学家苏格拉底说："未经审视的人生不值得过。"这句话提醒我们要时常反思，保持清醒的自我认知。当我们懂得欣赏简单的美好，学会在平凡中发现意义，生活便会变得充实而富有诗意。
+                            有位来自蒙大拿州的年轻牛仔，略略爱慕虚荣，舍弃大衣与大手套，将所有薪水投资在手工打造的精品皮靴上。他越过州界南下怀俄明，认为越往南走天气会越暖和，不料当晚他冻死在保德河酷寒的西岸，其广度与流向众所周知。深一英寸，宽一英里，由得克萨斯往北流来。
                         </div>
-                        <div class="card-divider">✦ ✦ ✦</div>
+                        <div class="card-date">二零二四年 九月 三日</div>
+                        <div class="card-number">1</div>
                     </div>
                 </div>
             </div>
@@ -350,7 +479,7 @@
         </div>
         
         <div class="save-section">
-            <button class="save-button" id="saveBtn">保存卡片</button>
+            <button class="save-button" id="saveBtn">生成并保存卡片</button>
         </div>
     </div>
     
@@ -358,7 +487,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const inputText = document.getElementById('inputText');
-            const generateBtn = document.getElementById('generateBtn');
             const cardContainer = document.getElementById('cardContainer');
             const saveBtn = document.getElementById('saveBtn');
             const styleOptions = document.querySelectorAll('.style-option');
@@ -407,13 +535,44 @@
                 });
             }
             
-            // 生成当前日期
+            // 生成当前日期（用于文件名）
             function getCurrentDate() {
                 const now = new Date();
                 const year = now.getFullYear();
                 const month = now.getMonth() + 1;
                 const day = now.getDate();
                 return `${year}年${month}月${day}日`;
+            }
+            
+            // 生成中文日期
+            function getChineseDate() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = now.getMonth() + 1;
+                const day = now.getDate();
+                
+                const chineseNums = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+                
+                function toChineseYear(y) {
+                    return String(y).split('').map(d => chineseNums[parseInt(d)]).join('');
+                }
+                
+                function toChineseMonth(m) {
+                    if (m <= 10) return chineseNums[m];
+                    if (m < 20) return '十' + chineseNums[m - 10];
+                    return '十二';
+                }
+                
+                function toChineseDay(d) {
+                    if (d <= 10) return chineseNums[d];
+                    if (d < 20) return '十' + chineseNums[d - 10];
+                    if (d === 20) return '二十';
+                    if (d < 30) return '二十' + chineseNums[d - 20];
+                    if (d === 30) return '三十';
+                    return '三十一';
+                }
+                
+                return `${toChineseYear(year)}年 ${toChineseMonth(month)}月 ${toChineseDay(day)}日`;
             }
             
             // 分割文本内容
@@ -469,11 +628,12 @@
                     const card = document.createElement('div');
                     card.className = `card ${currentStyle}`;
                     card.innerHTML = `
-                        <div class="card-meta">
-                            <div class="card-date">${getCurrentDate()}</div>
-                        </div>
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="petal"></div>
+                        <div class="petal"></div>
                         <div class="card-content">${chunk}</div>
-                        <div class="card-divider">✦ ✦ ✦</div>
+                        <div class="card-number">${index + 1}</div>
                     `;
                     cardContainer.appendChild(card);
                 });
@@ -508,9 +668,6 @@
                 }
             });
             
-            // 生成卡片
-            generateBtn.addEventListener('click', generateCards);
-            
             // 文本内容变化时自动生成卡片并保存
             let timeoutId;
             inputText.addEventListener('input', function() {
@@ -533,29 +690,54 @@
             // 初始化加载保存的数据
             loadSavedData();
             
-            // 保存卡片
+            // 生成并保存卡片
             saveBtn.addEventListener('click', function() {
-                const cards = document.querySelectorAll('.card');
+                const text = inputText.value.trim();
+                if (!text) {
+                    alert('请先输入要生成卡片的文本');
+                    return;
+                }
                 
-                cards.forEach((card, index) => {
-                    html2canvas(card, {
-                        scale: 2,
-                        useCORS: true,
-                        backgroundColor: '#ffffff'
-                    }).then(canvas => {
-                        // 将canvas转换为图片
-                        const image = canvas.toDataURL('image/png');
-                        
-                        // 创建下载链接
-                        const link = document.createElement('a');
-                        link.download = `card_${index + 1}_${getCurrentDate().replace(/[年月]/g, '-').replace(/日/g, '')}.png`;
-                        link.href = image;
-                        link.click();
-                    }).catch(error => {
-                        console.error('保存失败:', error);
-                        alert('保存失败，请重试');
+                generateCards();
+                
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('.card');
+                    
+                    if (cards.length === 0) {
+                        alert('没有卡片可保存');
+                        return;
+                    }
+                    
+                    // 为每个卡片添加延迟下载，避免手机浏览器限制
+                    cards.forEach((card, index) => {
+                        setTimeout(() => {
+                            html2canvas(card, {
+                                scale: 2,
+                                useCORS: true,
+                                backgroundColor: '#ffffff'
+                            }).then(canvas => {
+                                // 将canvas转换为图片
+                                const image = canvas.toDataURL('image/png');
+                                
+                                // 创建下载链接
+                                const link = document.createElement('a');
+                                link.download = `card_${index + 1}_${getCurrentDate().replace(/[年月]/g, '-').replace(/日/g, '')}.png`;
+                                link.href = image;
+                                link.click();
+                                
+                                // 最后一个卡片下载完成后提示
+                                if (index === cards.length - 1) {
+                                    setTimeout(() => {
+                                        alert(`已成功下载 ${cards.length} 张卡片`);
+                                    }, 1000);
+                                }
+                            }).catch(error => {
+                                console.error('保存失败:', error);
+                                alert('保存失败，请重试');
+                            });
+                        }, index * 500); // 每个卡片延迟500ms下载
                     });
-                });
+                }, 300);
             });
         });
     </script>
