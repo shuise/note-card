@@ -3,286 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>朋友圈卡片生成器</title>
+    <title>卡片生成器</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        
-        h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .input-section {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        textarea {
-            width: 100%;
-            height: 200px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            resize: none;
-            font-family: inherit;
-            margin-bottom: 15px;
-        }
-        
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        button:hover {
-            background-color: #45a049;
-        }
-        
-        .card-preview {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        .album-container {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        
-        .card-container {
-            display: flex;
-            transition: transform 0.3s ease;
-        }
-        
+
         @font-face {
             font-family: 'Iansui';
             src: url('Iansui-Regular.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
-        
+
+        :root {
+            --bg-page: #f4f2ee;
+            --panel-bg: rgba(255, 255, 255, 0.94);
+            --panel-border: rgba(223, 214, 201, 0.8);
+            --text-main: #2f2a25;
+            --text-soft: #7d7368;
+            --accent: #d46a6a;
+            --shadow-panel: 0 18px 45px rgba(62, 45, 27, 0.08);
+            --shadow-card: 0 14px 38px rgba(72, 57, 39, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background:
+                radial-gradient(circle at top, rgba(255, 255, 255, 0.7), transparent 36%),
+                linear-gradient(180deg, #f8f6f2 0%, #f0ece5 100%);
+            color: var(--text-main);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #2c261f;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 0.04em;
+        }
+
+        .input-section,
+        .card-preview {
+            /*background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-panel);
+            backdrop-filter: blur(8px);*/
+        }
+
+        .input-section {
+            /*padding: 18px;*/
+            margin-bottom: 20px;
+        }
+
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .control-label {
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #8c8275;
+        }
+
+        .template-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .template-option {
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid #ddd3c7;
+            background: #f8f4ef;
+            color: #7b6f62;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.24s ease;
+        }
+
+        .template-option.active {
+            background: #d46a6a;
+            border-color: #d46a6a;
+            color: #fffaf8;
+            box-shadow: 0 10px 20px rgba(212, 106, 106, 0.22);
+        }
+
+        .style-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            align-items: center;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .style-selector.hidden {
+            opacity: 0.35;
+            pointer-events: none;
+            transform: translateY(2px);
+        }
+
+        .style-option {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.24s ease, border-color 0.24s ease;
+        }
+
+        .style-option:hover {
+            transform: scale(1.08);
+        }
+
+        .style-option.active {
+            border-color: #342c24;
+        }
+
+        .style-option.blue {
+            background: #e8c4c4;
+        }
+
+        .style-option.green {
+            background: #b8d4b8;
+        }
+
+        .style-option.orange {
+            background: #d4a574;
+        }
+
+        .style-option.purple {
+            background: #c49ad6;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 1px solid #e2d9cf;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: none;
+            font-family: inherit;
+            background: rgba(253, 251, 248, 0.96);
+            color: #352e27;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #d6b59f;
+            box-shadow: 0 0 0 4px rgba(214, 181, 159, 0.16);
+        }
+
+        .card-preview {
+            /*padding: 16px;*/
+            margin-bottom: 20px;
+        }
+
+        .album-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+
+        .card-container {
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+
+        .card {
+            min-width: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            aspect-ratio: 9 / 10;
+            box-shadow: var(--shadow-card);
+        }
+
+        .card.c1 {
+            padding: 40px 32px 50px;
+            border-radius: 10px;
+            background-color: #f0ebe5;
+            color: #333;
+        }
+
+        .card.c1.blue {
+            background-color: #f0ebe5;
+        }
+
+        .card.c1.green {
+            background-color: #e8ebe5;
+        }
+
+        .card.c1.orange {
+            background-color: #ebe5e0;
+        }
+
+        .card.c1.purple {
+            background-color: #e5e0eb;
+        }
+
+        .card.c1::before,
+        .card.c2::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
         .petal {
             position: absolute;
             background: radial-gradient(ellipse at center, #f4a0a0 0%, #e88080 100%);
             border-radius: 50% 50% 50% 0;
             pointer-events: none;
         }
-        
-        .pagination {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-        }
-        
-        .page-info {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .page-controls {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .page-btn {
-            padding: 8px 16px;
-            background-color: #f0f0f0;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-        
-        .page-btn:hover {
-            background-color: #e0e0e0;
-        }
-        
-        .page-btn:disabled {
-            background-color: #f9f9f9;
-            color: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .card.blue {
-            background-color: #f0ebe5;
-            color: #333;
-        }
-        
-        .card.green {
-            background-color: #e8ebe5;
-            color: #333;
-        }
-        
-        .card.orange {
-            background-color: #ebe5e0;
-            color: #333;
-        }
-        
-        .card.purple {
-            background-color: #e5e0eb;
-            color: #333;
-        }
-        
-        .style-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            justify-content: flex-end;
-        }
-        
-        .style-option {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.3s;
-        }
-        
-        .style-option:hover {
-            transform: scale(1.1);
-        }
-        
-        .style-option.active {
-            border-color: #333;
-        }
-        
-        .style-option.blue {
-            background-color: #e8c4c4;
-        }
-        
-        .style-option.green {
-            background-color: #b8d4b8;
-        }
-        
-        .style-option.orange {
-            background-color: #d4a574;
-        }
-        
-        .style-option.purple {
-            background-color: #c49ad6;
-        }
-        
-        .card {
-            min-width: 100%;
-            background-color: #f0ebe5;
-            border-radius: 0.4rem;
-            padding: 40px;
+
+        .card.c1 .card-content {
             position: relative;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            aspect-ratio: 9/10;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: none;
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-        }
-        
-        .card-meta {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .card-date {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            opacity: 0;
-        }
-        
-        .card-category {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .card-quote {
-            background-color: #f9f9f9;
-            border-left: 4px solid #ff7f50;
-            padding: 15px;
-            margin-bottom: 20px;
-            font-style: italic;
-            color: #555;
-            border-radius: 0 5px 5px 0;
-        }
-        
-        .card-content {
+            z-index: 1;
             font-size: 20px;
             color: #333;
-            line-height: 1.55;
+            line-height: 1.5;
             margin-bottom: auto;
             flex-grow: 1;
             text-align: left;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.04em;
+            white-space: pre-wrap;
             font-family: 'Iansui', Verdana, Geneva, Tahoma, sans-serif;
         }
-        
-        .card-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #111;
-            margin-bottom: 28px;
-            letter-spacing: 1px;
-            font-family: 'Iansui', Verdana, Geneva, Tahoma, sans-serif;
-        }
-        
-        .card-date {
+
+        .card.c1 .card-date {
+            position: relative;
+            z-index: 1;
             font-size: 15px;
             color: #333;
             margin-top: auto;
-            letter-spacing: 3px;
+            letter-spacing: 0.18em;
+            font-family: 'Iansui', Verdana, Geneva, Tahoma, sans-serif;
         }
-        
-        .card-number {
+
+        .card.c1 .card-number {
             position: absolute;
             bottom: 15px;
             right: 15px;
@@ -290,47 +278,372 @@
             color: #999;
             font-family: 'Iansui', Verdana, Geneva, Tahoma, sans-serif;
         }
-        
-        .card-tags {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .card-tag {
-            padding: 6px 12px;
-            background-color: #f0f0f0;
-            border-radius: 15px;
-            font-size: 12px;
-            color: #666;
-        }
-        
-        .card-divider {
-            display: none;
-        }
-        
-        .card-book {
-            position: relative;
-            height: 80px;
-            background-color: #f5f5f5;
+
+        .card.c2 {
+            padding: 0;
             border-radius: 5px;
-            margin-top: 20px;
-            overflow: hidden;
+            background:
+                radial-gradient(circle at center, rgba(255, 255, 255, 0.92), rgba(248, 242, 228, 0.95) 64%, rgba(240, 232, 216, 0.98) 100%),
+                linear-gradient(180deg, #fcfaf4 0%, #f5efe1 100%);
         }
-        
-        .card-book::before {
+
+        .card.c2::after {
             content: '';
             position: absolute;
-            bottom: 0;
+            inset: 0;
+            border: 1px solid rgba(231, 221, 204, 0.92);
+            box-shadow:
+                inset 0 0 28px rgba(255, 255, 255, 0.55),
+                inset 0 0 90px rgba(233, 222, 200, 0.24);
+            pointer-events: none;
+        }
+
+        .card.c2 .c2-seal {
+            position: absolute;
+            bottom: 92px;
+            left: 62px;
+            width: 92px;
+            height: 92px;
+            background: linear-gradient(180deg, rgba(234, 176, 176, 0.92), rgba(216, 145, 145, 0.94));
+            border-radius: 14px;
+            transform: rotate(3deg);
+            box-shadow: 0 10px 20px rgba(201, 127, 127, 0.18);
+            z-index: 2;
+        }
+
+        .card.c2 .c2-seal::before {
+            content: '';
+            position: absolute;
+            inset: 10px;
+            border: 2px solid rgba(252, 240, 235, 0.85);
+            border-radius: 12px;
+        }
+
+        .card.c2 .c2-seal span {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff7f2;
+            font-size: 24px;
+            letter-spacing: 0.14em;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-family: 'Iansui', 'STKaiti', serif;
+        }
+
+        .card.c2 .c2-top-ripples,
+        .card.c2 .c2-mid-ripples,
+        .card.c2 .c2-bottom-ripples {
+            position: absolute;
             left: 0;
             right: 0;
-            height: 60px;
-            background-image: linear-gradient(to right, #e0e0e0 1px, transparent 1px),
-                              linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
-            background-size: 20px 20px;
-            opacity: 0.5;
+            pointer-events: none;
         }
-        
+
+        .card.c2 .c2-top-ripples {
+            top: 34px;
+            left: 226px;
+            right: 120px;
+            height: 70px;
+            opacity: 0.3;
+        }
+
+        .card.c2 .c2-top-ripples span,
+        .card.c2 .c2-mid-ripples span,
+        .card.c2 .c2-bottom-ripples span {
+            position: absolute;
+            left: 0;
+            right: 0;
+            border-top: 2px solid rgba(204, 193, 176, 0.35);
+            border-radius: 50%;
+            transform-origin: center;
+        }
+
+        .card.c2 .c2-top-ripples span:nth-child(1) {
+            top: 10px;
+            height: 24px;
+            transform: rotate(1deg);
+        }
+
+        .card.c2 .c2-top-ripples span:nth-child(2) {
+            top: 28px;
+            left: 18px;
+            right: 16px;
+            height: 22px;
+            transform: rotate(-2deg);
+        }
+
+        .card.c2 .c2-branch {
+            position: absolute;
+            top: 108px;
+            right: 70px;
+            width: 154px;
+            height: 84px;
+            z-index: 1;
+            opacity: 0.38;
+        }
+
+        .card.c2 .c2-branch::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 26px;
+            width: 148px;
+            border-top: 4px solid rgba(172, 159, 144, 0.7);
+            border-radius: 50%;
+            transform: rotate(-13deg);
+        }
+
+        .card.c2 .c2-branch::after {
+            content: '';
+            position: absolute;
+            right: 34px;
+            top: 6px;
+            width: 42px;
+            height: 72px;
+            border-right: 4px solid rgba(172, 159, 144, 0.55);
+            border-radius: 50%;
+            transform: rotate(18deg);
+        }
+
+        .card.c2 .c2-branch span {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: rgba(203, 193, 176, 0.45);
+            border-radius: 50%;
+        }
+
+        .card.c2 .c2-branch span:nth-child(1) {
+            left: 18px;
+            top: 34px;
+        }
+
+        .card.c2 .c2-branch span:nth-child(2) {
+            left: 56px;
+            top: 18px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .card.c2 .c2-branch span:nth-child(3) {
+            left: 92px;
+            top: 24px;
+            width: 17px;
+            height: 17px;
+        }
+
+        .card.c2 .c2-branch span:nth-child(4) {
+            right: 12px;
+            top: 0;
+        }
+
+        .card.c2 .c2-branch span:nth-child(5) {
+            left: 48px;
+            top: 62px;
+            width: 13px;
+            height: 13px;
+        }
+
+        .card.c2 .c2-content-wrap {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            padding: 198px 54px 172px 60px;
+        }
+
+        .card.c2 .card-content {
+            width: 100%;
+            max-width: 100%;
+            color: #514739;
+            font-size: 20px;
+            line-height: 1.9;
+            letter-spacing: 0.08em;
+            white-space: pre-wrap;
+            font-family: 'Iansui', 'STKaiti', serif;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+        }
+
+        .card.c2 .c2-bamboo {
+            position: absolute;
+            left: 60px;
+            bottom: 350px;
+            width: 86px;
+            height: 150px;
+            opacity: 0.24;
+            z-index: 1;
+        }
+
+        .card.c2 .c2-bamboo span {
+            position: absolute;
+            background: linear-gradient(180deg, rgba(197, 208, 184, 0.58), rgba(172, 191, 156, 0.38));
+            border-radius: 70% 15% 70% 15%;
+            transform-origin: center;
+        }
+
+        .card.c2 .c2-bamboo span:nth-child(1) {
+            left: 2px;
+            top: 2px;
+            width: 22px;
+            height: 56px;
+            transform: rotate(-26deg);
+        }
+
+        .card.c2 .c2-bamboo span:nth-child(2) {
+            left: 30px;
+            top: 22px;
+            width: 22px;
+            height: 62px;
+            transform: rotate(15deg);
+        }
+
+        .card.c2 .c2-bamboo span:nth-child(3) {
+            left: 0;
+            top: 70px;
+            width: 24px;
+            height: 58px;
+            transform: rotate(-18deg);
+        }
+
+        .card.c2 .c2-bamboo span:nth-child(4) {
+            left: 38px;
+            top: 84px;
+            width: 18px;
+            height: 46px;
+            transform: rotate(18deg);
+        }
+
+        .card.c2 .c2-mid-ripples {
+            bottom: 236px;
+            height: 74px;
+            opacity: 0.28;
+        }
+
+        .card.c2 .c2-mid-ripples span:nth-child(1) {
+            top: 8px;
+            height: 24px;
+            transform: rotate(0.7deg);
+        }
+
+        .card.c2 .c2-mid-ripples span:nth-child(2) {
+            top: 28px;
+            left: -8px;
+            right: -8px;
+            height: 22px;
+            transform: rotate(-1deg);
+        }
+
+        .card.c2 .c2-mid-ripples span:nth-child(3) {
+            top: 46px;
+            left: 12px;
+            right: 12px;
+            height: 18px;
+        }
+
+        .card.c2 .c2-bottom-ripples {
+            bottom: 32px;
+            height: 120px;
+            opacity: 0.18;
+        }
+
+        .card.c2 .c2-bottom-ripples span:nth-child(1) {
+            bottom: 60px;
+            height: 24px;
+            left: 26px;
+            right: 18px;
+            transform: rotate(1deg);
+        }
+
+        .card.c2 .c2-bottom-ripples span:nth-child(2) {
+            bottom: 42px;
+            height: 20px;
+            left: -8px;
+            right: 22px;
+            transform: rotate(-1deg);
+        }
+
+        .card.c2 .c2-bottom-ripples span:nth-child(3) {
+            bottom: 22px;
+            height: 24px;
+            left: 16px;
+            right: -10px;
+            transform: rotate(0.8deg);
+        }
+
+        .card.c2 .c2-bottom-ripples span:nth-child(4) {
+            bottom: 2px;
+            height: 22px;
+            left: -6px;
+            right: 12px;
+            transform: rotate(-0.8deg);
+        }
+
+        .card.c2 .card-date,
+        .card.c2 .card-number {
+            position: absolute;
+            z-index: 2;
+            color: rgba(127, 115, 97, 0.46);
+            font-family: 'Iansui', 'STKaiti', serif;
+            letter-spacing: 0.14em;
+        }
+
+        .card.c2 .card-date {
+            left: 48px;
+            bottom: 26px;
+            font-size: 12px;
+        }
+
+        .card.c2 .card-number {
+            right: 34px;
+            bottom: 22px;
+            font-size: 14px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-info {
+            font-size: 14px;
+            color: #766d62;
+        }
+
+        .page-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            background-color: #f3ede5;
+            border: 1px solid #e2d7ca;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #605548;
+            transition: background-color 0.24s ease, transform 0.24s ease;
+        }
+
+        .page-btn:hover {
+            background-color: #ece2d6;
+            transform: translateY(-1px);
+        }
+
+        .page-btn:disabled {
+            background-color: #f7f3ee;
+            color: #c2b7aa;
+            border-color: #ece4da;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .save-section {
             text-align: center;
             margin-top: 20px;
@@ -338,57 +651,134 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: white;
+            background: rgba(255, 255, 255, 0.94);
             padding: 16px 20px;
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
             z-index: 100;
+            backdrop-filter: blur(8px);
         }
-        
+
         .save-button {
             padding: 14px 28px;
-            background-color: #d46a6a;
+            background: linear-gradient(180deg, #de7a7a 0%, #ca6666 100%);
             color: white;
             border: none;
-            border-radius: 25px;
+            border-radius: 999px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(212, 106, 106, 0.4);
+            transition: transform 0.24s ease, box-shadow 0.24s ease;
+            box-shadow: 0 8px 18px rgba(212, 106, 106, 0.32);
         }
-        
+
         .save-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(212, 106, 106, 0.5);
-            background-color: #c45a5a;
+            box-shadow: 0 12px 24px rgba(212, 106, 106, 0.38);
         }
-        
+
         .save-button:active {
             transform: translateY(0);
         }
-        
-        @media screen and (max-width: 480px) {
+
+        @media screen and (max-width: 3480px) {
             body {
                 padding: 10px;
-                padding-bottom: 80px;
+                padding-bottom: 88px;
             }
-            
-            .card {
-                padding: 36px 28px 50px 28px;
+
+            .input-section,
+            .card-preview {
+                border-radius: 18px;
             }
-            
-            .card-content {
-                font-size: 15px;
+
+            .controls-header {
+                flex-direction: column;
             }
-            
-            .card-title {
+
+            .style-selector {
+                justify-content: flex-start;
+            }
+
+            .card.c1 {
+                padding: 36px 28px 48px;
+            }
+
+            .card.c1 .card-content {
+                font-size: 17px;
+            }
+
+            .card.c2 .c2-seal {
+                top: 310px;
+                left: 20px;
+                width: 76px;
+                height: 76px;
+                opacity: 0.3;
+            }
+
+            .card.c2 .c2-seal span {
                 font-size: 20px;
             }
-            
+
+            .card.c2 .c2-top-ripples {
+                left: 140px;
+                right: 56px;
+            }
+
+            .card.c2 .c2-branch {
+                top: 92px;
+                right: 34px;
+                width: 126px;
+                opacity: 0.34;
+                transform: scale(0.9);
+                transform-origin: top right;
+            }
+
+            .card.c2 .c2-content-wrap {
+                padding: 20px;
+            }
+
+            .card.c2 .card-content {
+                font-size: 16px;
+                line-height: 1.55;
+            }
+
+            .card.c2 .c2-bamboo {
+                left: 38px;
+                bottom: 282px;
+                transform: scale(0.84);
+                transform-origin: left bottom;
+            }
+
+            .card.c2 .c2-mid-ripples {
+                bottom: 196px;
+            }
+
+            .card.c2 .card-date {
+                display: none;
+                left: 28px;
+                bottom: 22px;
+                font-size: 11px;
+            }
+
+            .card.c2 .card-number {
+                right: 24px;
+                bottom: 18px;
+                font-size: 12px;
+            }
+
+            .pagination {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .page-controls {
+                justify-content: space-between;
+            }
+
             .save-section {
                 padding: 12px 16px;
             }
-            
+
             .save-button {
                 padding: 12px 24px;
                 font-size: 15px;
@@ -398,102 +788,128 @@
 </head>
 <body>
     <div class="container">
-        <h1>朋友圈卡片生成器</h1>
-        
-        <div class="input-section">
-            <div class="style-selector">
-                <div class="style-option blue active" data-style="blue"></div>
-                <div class="style-option green" data-style="green"></div>
-                <div class="style-option orange" data-style="orange"></div>
-                <div class="style-option purple" data-style="purple"></div>
-            </div>
-            <textarea id="inputText" placeholder="请输入要生成卡片的文本...\n\n内容变化时会自动生成卡片"></textarea>
-        </div>
-        
-        <div class="card-preview">
-            <div class="album-container">
-                <div class="card-container" id="cardContainer">
-                    <div class="card blue">
-                        <div class="petal"></div>
-                        <div class="petal"></div>
-                        <div class="petal"></div>
-                        <div class="petal"></div>
-                        <div class="card-title"></div>
-                        <div class="card-content">
-                            
+        <h1>卡片生成器</h1>
+
+        <div style="display: flex; height:700px;">
+            <div class="input-section" style="width:300px;margin-right:20px;">
+                <div class="controls-header" style="display:none">
+                    <div class="control-group">
+                        <div class="control-label">卡片模板</div>
+                        <div class="template-selector" id="templateSelector">
+                            <button type="button" class="template-option active" data-template="c1">C1 现有款</button>
+                            <button type="button" class="template-option" data-template="c2">C2 禅意款</button>
                         </div>
-                        <div class="card-date">二零二四年 九月 三日</div>
-                        <div class="card-number">1</div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label">颜色</div>
+                        <div class="style-selector" id="styleSelector">
+                            <div class="style-option blue active" data-style="blue"></div>
+                            <div class="style-option green" data-style="green"></div>
+                            <div class="style-option orange" data-style="orange"></div>
+                            <div class="style-option purple" data-style="purple"></div>
+                        </div>
+                    </div>
+                </div>
+                <textarea id="inputText" placeholder="请输入文本……" style="height:650px;"></textarea>
+            </div>
+
+            <div class="card-preview" style="width:360px;">
+                <div class="album-container">
+                    <div class="card-container" id="cardContainer"></div>
+                </div>
+                <div class="pagination">
+                    <div class="page-info" id="pageInfo">暂无卡片</div>
+                    <div class="page-controls">
+                        <button class="page-btn" id="prevBtn" disabled>上一页</button>
+                        <button class="page-btn" id="nextBtn" disabled>下一页</button>
                     </div>
                 </div>
             </div>
-            <div class="pagination">
-                <div class="page-info" id="pageInfo">第 1 页，共 1 页</div>
-                <div class="page-controls">
-                    <button class="page-btn" id="prevBtn" disabled>上一页</button>
-                    <button class="page-btn" id="nextBtn" disabled>下一页</button>
-                </div>
-            </div>
         </div>
-        
+
         <div class="save-section">
             <button class="save-button" id="saveBtn">生成并保存卡片</button>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const inputText = document.getElementById('inputText');
             const cardContainer = document.getElementById('cardContainer');
             const saveBtn = document.getElementById('saveBtn');
+            const styleSelector = document.getElementById('styleSelector');
             const styleOptions = document.querySelectorAll('.style-option');
+            const templateOptions = document.querySelectorAll('.template-option');
             const pageInfo = document.getElementById('pageInfo');
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
-            
+
             let currentStyle = 'blue';
+            let currentTemplate = 'c2';
             let currentPage = 0;
             let totalPages = 0;
-            
-            // 加载保存的内容和样式
+
+            function escapeHtml(text) {
+                return text
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function formatContent(content) {
+                return escapeHtml(content).replace(/\n/g, '<br>');
+            }
+
             function loadSavedData() {
                 const savedContent = localStorage.getItem('cardContent');
                 if (savedContent) {
                     inputText.value = savedContent;
                 }
-                
+
                 const savedStyle = localStorage.getItem('cardStyle');
                 if (savedStyle) {
                     currentStyle = savedStyle;
                     updateStyleSelector();
                 }
-                
-                generateCards(); // 加载后自动生成卡片
+
+                const savedTemplate = localStorage.getItem('cardTemplate');
+                if (savedTemplate) {
+                    currentTemplate = savedTemplate;
+                }
+
+                updateTemplateSelector();
+                generateCards();
             }
-            
-            // 保存内容到本地缓存
+
             function saveContent(content) {
                 localStorage.setItem('cardContent', content);
             }
-            
-            // 保存样式到本地缓存
+
             function saveStyle(style) {
                 localStorage.setItem('cardStyle', style);
             }
-            
-            // 更新样式选择器
+
+            function saveTemplate(template) {
+                localStorage.setItem('cardTemplate', template);
+            }
+
             function updateStyleSelector() {
                 styleOptions.forEach(option => {
-                    if (option.dataset.style === currentStyle) {
-                        option.classList.add('active');
-                    } else {
-                        option.classList.remove('active');
-                    }
+                    option.classList.toggle('active', option.dataset.style === currentStyle);
                 });
             }
-            
-            // 生成当前日期（用于文件名）
+
+            function updateTemplateSelector() {
+                templateOptions.forEach(option => {
+                    option.classList.toggle('active', option.dataset.template === currentTemplate);
+                });
+
+                styleSelector.classList.toggle('hidden', currentTemplate !== 'c1');
+            }
+
             function getCurrentDate() {
                 const now = new Date();
                 const year = now.getFullYear();
@@ -501,52 +917,49 @@
                 const day = now.getDate();
                 return `${year}年${month}月${day}日`;
             }
-            
-            // 生成中文日期
+
             function getChineseDate() {
                 const now = new Date();
                 const year = now.getFullYear();
                 const month = now.getMonth() + 1;
                 const day = now.getDate();
-                
+
                 const chineseNums = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
-                
-                function toChineseYear(y) {
-                    return String(y).split('').map(d => chineseNums[parseInt(d)]).join('');
+
+                function toChineseYear(value) {
+                    return String(value).split('').map(digit => chineseNums[parseInt(digit, 10)]).join('');
                 }
-                
-                function toChineseMonth(m) {
-                    if (m <= 10) return chineseNums[m];
-                    if (m < 20) return '十' + chineseNums[m - 10];
+
+                function toChineseMonth(value) {
+                    if (value <= 10) return chineseNums[value];
+                    if (value < 20) return '十' + chineseNums[value - 10];
                     return '十二';
                 }
-                
-                function toChineseDay(d) {
-                    if (d <= 10) return chineseNums[d];
-                    if (d < 20) return '十' + chineseNums[d - 10];
-                    if (d === 20) return '二十';
-                    if (d < 30) return '二十' + chineseNums[d - 20];
-                    if (d === 30) return '三十';
+
+                function toChineseDay(value) {
+                    if (value <= 10) return chineseNums[value];
+                    if (value < 20) return '十' + chineseNums[value - 10];
+                    if (value === 20) return '二十';
+                    if (value < 30) return '二十' + chineseNums[value - 20];
+                    if (value === 30) return '三十';
                     return '三十一';
                 }
-                
+
                 return `${toChineseYear(year)}年 ${toChineseMonth(month)}月 ${toChineseDay(day)}日`;
             }
-            
-            // 分割文本内容
+
             function splitContent(content) {
                 const contentText = content.trim();
                 const chunks = [];
                 const maxLength = 200;
-                
-                // 按句号分割内容（包括中英文句号）
-                const sentences = contentText.split(/[。.]/).filter(s => s.trim());
-                
+
+                const sentences = contentText.split(/[。.]/).filter(sentence => sentence.trim());
+
                 let currentChunk = '';
                 sentences.forEach(sentence => {
                     const sentenceWithPeriod = sentence.trim() + '。';
                     const testChunk = currentChunk + sentenceWithPeriod;
-                    
+
                     if (testChunk.length <= maxLength) {
                         currentChunk = testChunk;
                     } else {
@@ -556,88 +969,134 @@
                         currentChunk = sentenceWithPeriod;
                     }
                 });
-                
+
                 if (currentChunk) {
                     chunks.push(currentChunk);
                 }
-                
+
+                if (!chunks.length && contentText) {
+                    chunks.push(contentText);
+                }
+
                 return chunks;
             }
-            
-            // 生成卡片
+
+            function buildC1Card(chunk, index) {
+                let petalHTML = '';
+                for (let i = 0; i < 4; i++) {
+                    const top = Math.random() * 60 + 5;
+                    const left = Math.random() * 80 + 5;
+                    const rotate = Math.random() * 180 - 90;
+                    const width = Math.random() * 15 + 12;
+                    const height = Math.random() * 8 + 8;
+                    const opacity = Math.random() * 0.3 + 0.3;
+                    petalHTML += `<div class="petal" style="top:${top}%;left:${left}%;transform:rotate(${rotate}deg);width:${width}px;height:${height}px;opacity:${opacity};"></div>`;
+                }
+
+                return `
+                    ${petalHTML}
+                    <div class="card-content">${formatContent(chunk)}</div>
+                    <div class="card-date">${getChineseDate()}</div>
+                    <div class="card-number">${index + 1}</div>
+                `;
+            }
+
+            function buildC2Card(chunk, index) {
+                return `
+                    <div class="c2-seal"><span>逃禅</span></div>
+                    <div class="c2-top-ripples">
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="c2-branch">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="c2-content-wrap">
+                        <div class="card-content">${formatContent(chunk)}</div>
+                    </div>
+                    <div class="c2-bamboo">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="c2-mid-ripples">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="c2-bottom-ripples">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="card-date">${getCurrentDate()}</div>
+                    <div class="card-number">${String(index + 1).padStart(2, '0')}</div>
+                `;
+            }
+
             function generateCards() {
                 const text = inputText.value.trim();
-                
-                // 清空容器
+
                 cardContainer.innerHTML = '';
                 currentPage = 0;
-                
+
                 if (!text) {
+                    totalPages = 0;
                     updatePagination();
                     return;
                 }
-                
-                // 分割内容
+
                 const chunks = splitContent(text);
                 totalPages = chunks.length;
-                
-                // 生成卡片
+
                 chunks.forEach((chunk, index) => {
                     const card = document.createElement('div');
-                    card.className = `card ${currentStyle}`;
-                    
-                    // 生成随机位置的花瓣
-                    let petalHTML = '';
-                    for (let i = 0; i < 4; i++) {
-                        const top = Math.random() * 60 + 5;
-                        const left = Math.random() * 80 + 5;
-                        const rotate = Math.random() * 180 - 90;
-                        const width = Math.random() * 15 + 12;
-                        const height = Math.random() * 8 + 8;
-                        const opacity = Math.random() * 0.3 + 0.3;
-                        petalHTML += `<div class="petal" style="top:${top}%;left:${left}%;transform:rotate(${rotate}deg);width:${width}px;height:${height}px;opacity:${opacity};"></div>`;
-                    }
-                    
-                    card.innerHTML = `
-                        ${petalHTML}
-                        <div class="card-content">${chunk}</div>
-                        <div class="card-date">${getChineseDate()}</div>
-                        <div class="card-number">${index + 1}</div>
-                    `;
+                    const themeClass = currentTemplate === 'c1' ? ` ${currentStyle}` : '';
+                    card.className = `card ${currentTemplate}${themeClass}`;
+                    card.innerHTML = currentTemplate === 'c1'
+                        ? buildC1Card(chunk, index)
+                        : buildC2Card(chunk, index);
                     cardContainer.appendChild(card);
                 });
-                
-                // 更新分页
+
                 updatePagination();
             }
-            
-            // 更新分页信息
+
             function updatePagination() {
+                if (totalPages === 0) {
+                    pageInfo.textContent = '暂无卡片';
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
+                    cardContainer.style.transform = 'translateX(0)';
+                    return;
+                }
+
                 pageInfo.textContent = `第 ${currentPage + 1} 页，共 ${totalPages} 页`;
                 prevBtn.disabled = currentPage === 0;
                 nextBtn.disabled = currentPage >= totalPages - 1;
-                
-                // 更新卡片容器位置
                 cardContainer.style.transform = `translateX(-${currentPage * 100}%)`;
             }
-            
-            // 上一页
+
             prevBtn.addEventListener('click', function() {
                 if (currentPage > 0) {
                     currentPage--;
                     updatePagination();
                 }
             });
-            
-            // 下一页
+
             nextBtn.addEventListener('click', function() {
                 if (currentPage < totalPages - 1) {
                     currentPage++;
                     updatePagination();
                 }
             });
-            
-            // 文本内容变化时即时重新生成卡片
+
             let timeoutId;
             inputText.addEventListener('input', function() {
                 const content = this.value;
@@ -645,8 +1104,7 @@
                 clearTimeout(timeoutId);
                 timeoutId = setTimeout(generateCards, 200);
             });
-            
-            // 样式选择
+
             styleOptions.forEach(option => {
                 option.addEventListener('click', function() {
                     currentStyle = this.dataset.style;
@@ -655,70 +1113,78 @@
                     generateCards();
                 });
             });
-            
-            // 初始化加载保存的数据
+
+            templateOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    currentTemplate = this.dataset.template;
+                    saveTemplate(currentTemplate);
+                    updateTemplateSelector();
+                    generateCards();
+                });
+            });
+
             loadSavedData();
-            
-            // 生成并保存卡片
+
             saveBtn.addEventListener('click', function() {
                 const text = inputText.value.trim();
                 if (!text) {
                     alert('请先输入要生成卡片的文本');
                     return;
                 }
-                
+
                 generateCards();
-                
+
                 setTimeout(() => {
                     const cards = document.querySelectorAll('.card');
-                    
+
                     if (cards.length === 0) {
                         alert('没有卡片可保存');
                         return;
                     }
-                    
-                    // 保存卡片到服务器
+
                     saveCardsToServer(cards);
                 }, 300);
             });
-            
-            // 保存卡片到服务器
+
             async function saveCardsToServer(cards) {
                 const total = cards.length;
-                
+
                 for (let index = 0; index < cards.length; index++) {
                     const card = cards[index];
-                    
+
                     try {
                         const canvas = await html2canvas(card, {
                             scale: 2,
                             useCORS: true,
                             backgroundColor: '#ffffff'
                         });
-                        
+
                         const imageData = canvas.toDataURL('image/png');
-                        
-                        // 发送到服务器
+
                         await fetch('/api/save-card', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                imageData: imageData,
-                                index: index,
-                                total: total
+                                imageData,
+                                index,
+                                total
                             })
                         });
-                        
                     } catch (error) {
                         console.error('保存失败:', error);
                         alert('保存失败，请重试');
                         return;
                     }
                 }
-                
-                console.log(`成功保存 ${total} 张卡片到 cards 文件夹`);
+
+                const name = document.title;
+
+                document.title = `成功保存 ${total} 张卡片到 cards 文件夹`;
+                setTimeout(function(){
+                    document.title = name;
+                }, 200);
             }
         });
     </script>
