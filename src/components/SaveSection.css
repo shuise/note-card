@@ -1,0 +1,51 @@
+.save-section {
+  text-align: center;
+  margin-top: 20px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.94);
+  padding: 16px 20px;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+
+.save-button {
+  padding: 14px 28px;
+  background: linear-gradient(180deg, #de7a7a 0%, #ca6666 100%);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, opacity 0.24s ease;
+  box-shadow: 0 8px 18px rgba(212, 106, 106, 0.32);
+}
+
+.save-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(212, 106, 106, 0.38);
+}
+
+.save-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.save-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media screen and (max-width: 768px) {
+  .save-section {
+    padding: 12px 16px;
+  }
+
+  .save-button {
+    padding: 12px 24px;
+    font-size: 15px;
+  }
+}

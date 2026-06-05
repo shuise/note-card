@@ -1,0 +1,42 @@
+.input-section {
+  width: 300px;
+  flex: 0 0 300px;
+  margin-bottom: 20px;
+}
+
+.input-section textarea {
+  width: 100%;
+  height: 650px;
+  padding: 15px;
+  border: 1px solid #e2d9cf;
+  border-radius: 5px;
+  font-size: 16px;
+  resize: vertical;
+  font-family: inherit;
+  background: rgba(253, 251, 248, 0.96);
+  color: #352e27;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.input-section textarea:focus {
+  outline: none;
+  border-color: #d6b59f;
+  box-shadow: 0 0 0 4px rgba(214, 181, 159, 0.16);
+}
+
+@media screen and (max-width: 960px) {
+  .input-section {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .input-section textarea {
+    height: 240px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .input-section textarea {
+    height: 200px;
+  }
+}

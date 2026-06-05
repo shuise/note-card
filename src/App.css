@@ -1,0 +1,33 @@
+.container {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+h1 {
+  font-size: 24px;
+  color: #2c261f;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.save-message {
+  text-align: center;
+  color: #5f8f5f;
+  margin: -8px 0 16px;
+  font-size: 14px;
+}
+
+.workspace {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+@media screen and (max-width: 960px) {
+  .workspace {
+    flex-direction: column;
+  }
+}
