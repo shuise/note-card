@@ -25,7 +25,7 @@ function Petal({ seed }) {
   );
 }
 
-export default function C1Card({ content, index, style, date }) {
+export default function C1Card({ content, index, style, date, backdropStyle }) {
   const petals = useMemo(
     () => [0, 1, 2, 3].map((petalIndex) => index * 10 + petalIndex),
     [index]
@@ -33,12 +33,12 @@ export default function C1Card({ content, index, style, date }) {
 
   return (
     <div className={`card c1 ${style}`}>
+      <div className="card-backdrop" style={backdropStyle} />
       {petals.map((seed) => (
         <Petal key={seed} seed={seed} />
       ))}
       <div className="card-content">{content}</div>
       <div className="card-date">{date}</div>
-      <div className="card-number">{index + 1}</div>
     </div>
   );
 }

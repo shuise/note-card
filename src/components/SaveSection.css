@@ -14,6 +14,8 @@
 
 .save-button {
   padding: 14px 28px;
+  /* 固定最小宽度：避免「生成并保存卡片」↔「正在保存…」切换时按钮尺寸跳动 */
+  min-width: 170px;
   background: linear-gradient(180deg, #de7a7a 0%, #ca6666 100%);
   color: white;
   border: none;

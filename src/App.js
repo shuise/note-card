@@ -9,7 +9,7 @@ import {
   loadSavedTemplate,
   saveContent,
 } from './utils/storage';
-import { saveCardsToServer } from './utils/saveCards';
+import { saveCards } from './utils/saveCards';
 import './App.css';
 
 function App() {
@@ -17,6 +17,10 @@ function App() {
   const [currentStyle, setCurrentStyle] = useState('blue');
   const [currentTemplate, setCurrentTemplate] = useState('c2');
   const [saveMessage, setSaveMessage] = useState('');
+  // 底图起始取景框，每次生成时随机推进，让每次的前几张卡片底图都不一样
+  const [backdropSeed, setBackdropSeed] = useState(() =>
+    Math.floor(Math.random() * 100)
+  );
 
   useEffect(() => {
     setText(loadSavedContent());
@@ -45,16 +49,23 @@ function App() {
       return;
     }
 
-    const cards = document.querySelectorAll('.card');
-
-    if (cards.length === 0) {
+    if (document.querySelectorAll('.card').length === 0) {
       window.alert('没有卡片可保存');
       return;
     }
 
     try {
-      const total = await saveCardsToServer(cards, currentTemplate);
-      const message = `成功保存 ${total} 张卡片到 cards 文件夹`;
+      // 每次生成换一个随机起始取景框（步进 ≥1，保证与上一次不同），等渲染完再导出
+      setBackdropSeed((seed) => seed + 1 + Math.floor(Math.random() * 15));
+      await new Promise((resolve) => {
+        window.requestAnimationFrame(() => window.requestAnimationFrame(resolve));
+      });
+
+      const cards = document.querySelectorAll('.card');
+      const { total, directoryName } = await saveCards(cards, currentTemplate);
+      const target = directoryName ? `「${directoryName}」文件夹` : '浏览器下载目录';
+      const message = `成功保存 ${total} 张卡片到${target}`;
+
       setSaveMessage(message);
       window.setTimeout(() => setSaveMessage(''), 3000);
     } catch (error) {
@@ -74,6 +85,7 @@ function App() {
           chunks={chunks}
           currentTemplate={currentTemplate}
           currentStyle={currentStyle}
+          backdropSeed={backdropSeed}
         />
       </div>
 

@@ -12,11 +12,22 @@ h1 {
   letter-spacing: 0.04em;
 }
 
+/* 悬浮提示：不参与布局，避免出现/消失时把页面内容挤动 */
 .save-message {
-  text-align: center;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  margin: 0;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(223, 214, 201, 0.9);
+  box-shadow: 0 8px 24px rgba(62, 45, 27, 0.12);
   color: #5f8f5f;
-  margin: -8px 0 16px;
   font-size: 14px;
+  white-space: nowrap;
 }
 
 .workspace {

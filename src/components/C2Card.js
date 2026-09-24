@@ -1,10 +1,11 @@
 import './Card.css';
 
-export default function C2Card({ content, index, date }) {
+export default function C2Card({ content, date, sealText, backdropStyle }) {
   return (
     <div className="card c2">
+      <div className="card-backdrop" style={backdropStyle} />
       <div className="c2-seal">
-        <span>逃禅</span>
+        <span>{sealText}</span>
       </div>
       <div className="c2-top-ripples">
         <span />
@@ -38,7 +39,6 @@ export default function C2Card({ content, index, date }) {
         <span />
       </div>
       <div className="card-date">{date}</div>
-      <div className="card-number">{String(index + 1).padStart(2, '0')}</div>
     </div>
   );
 }

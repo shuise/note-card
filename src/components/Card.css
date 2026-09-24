@@ -1,7 +1,6 @@
 .card {
   width: 360px;
   min-width: 360px;
-  height: 500px;
   min-height: 500px;
   flex: 0 0 360px;
   position: relative;
@@ -9,6 +8,20 @@
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-card);
+}
+
+/* 卡片底图：按原始像素显示，只做裁取不做缩放（尺寸/位置由 JS 按卡片序号计算）。
+   不透明度越低底图越淡，直接调下面这个值即可。
+   repeat：内容超高时卡片会比取景框高，取景框越出原图底边后由重复接上，避免下半张没有底图。
+   用 CSS background 而非 img + object-fit，因为 html2canvas 不支持 object-fit，导出会画错裁切 */
+.card-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.45;
+  background-image: url('../fonts/collect.jpeg');
+  background-repeat: repeat;
 }
 
 .card.c1 {
@@ -45,7 +58,8 @@
 
 .petal {
   position: absolute;
-  background: radial-gradient(ellipse at center, #f4a0a0 0%, #e88080 100%);
+  /* 需用 circle：html2canvas 无法渲染 ellipse 形态的 radial-gradient，导出时花瓣会丢失 */
+  background: radial-gradient(circle at center, #f4a0a0 0%, #e88080 100%);
   border-radius: 50% 50% 50% 0;
   pointer-events: none;
 }
@@ -74,15 +88,6 @@
   font-family: 'Iansui', Verdana, Geneva, Tahoma, sans-serif;
 }
 
-.card.c1 .card-number {
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-  font-size: 14px;
-  color: #999;
-  font-family: 'Iansui', Verdana, Geneva, Tahoma, sans-serif;
-}
-
 .card.c2 {
   padding: 0;
   border-radius: 5px;
@@ -91,14 +96,22 @@
     linear-gradient(180deg, #fcfaf4 0%, #f5efe1 100%);
 }
 
+/* 内发光用四层线性渐变实现，而不是 inset box-shadow：
+   html2canvas 无法渲染 inset 阴影，会把它画成覆盖整张卡的浅色罩子（把底图洗白）。
+   渐变参数按原 inset 阴影（0 0 28px 白 0.55 + 0 0 90px 米色 0.24）实测的亮度曲线标定。 */
 .card.c2::after {
   content: '';
   position: absolute;
   inset: 0;
   border: 1px solid rgba(231, 221, 204, 0.92);
-  box-shadow:
-    inset 0 0 28px rgba(255, 255, 255, 0.55),
-    inset 0 0 90px rgba(233, 222, 200, 0.24);
+  background-image:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.27) 0px, rgba(255, 255, 255, 0.19) 8px, rgba(255, 255, 255, 0.1) 16px, rgba(255, 255, 255, 0) 30px),
+    linear-gradient(to top, rgba(255, 255, 255, 0.27) 0px, rgba(255, 255, 255, 0.19) 8px, rgba(255, 255, 255, 0.1) 16px, rgba(255, 255, 255, 0) 30px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.27) 0px, rgba(255, 255, 255, 0.19) 8px, rgba(255, 255, 255, 0.1) 16px, rgba(255, 255, 255, 0) 30px),
+    linear-gradient(to left, rgba(255, 255, 255, 0.27) 0px, rgba(255, 255, 255, 0.19) 8px, rgba(255, 255, 255, 0.1) 16px, rgba(255, 255, 255, 0) 30px);
+  background-size: 100% 30px, 100% 30px, 30px 100%, 30px 100%;
+  background-position: top, bottom, left, right;
+  background-repeat: no-repeat;
   pointer-events: none;
 }
 
@@ -113,7 +126,7 @@
   border-radius: 14px;
   transform: rotate(3deg);
   box-shadow: 0 10px 20px rgba(201, 127, 127, 0.18);
-  opacity: 0.3;
+  opacity: 0.1;
   z-index: 2;
 }
 
@@ -392,36 +405,20 @@
   transform: rotate(-0.8deg);
 }
 
-.card.c2 .card-date,
-.card.c2 .card-number {
+.card.c2 .card-date {
   position: absolute;
   z-index: 2;
   color: rgba(127, 115, 97, 0.46);
   font-family: 'Iansui', 'STKaiti', serif;
   letter-spacing: 0.14em;
-}
-
-.card.c2 .card-date {
   display: none;
   left: 48px;
   bottom: 26px;
   font-size: 12px;
 }
 
-.card.c2 .card-number {
-  right: 34px;
-  bottom: 22px;
-  font-size: 14px;
-}
-
 @media screen and (max-width: 768px) {
   .card.c1 {
     padding: 36px 28px 48px;
-  }
-
-  .card.c2 .card-number {
-    right: 24px;
-    bottom: 18px;
-    font-size: 12px;
   }
 }
