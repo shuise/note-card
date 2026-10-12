@@ -12,6 +12,9 @@ import {
 import { saveCards } from './utils/saveCards';
 import './App.css';
 
+// 工具最近更新日期（手动维护，显示在标题下方）
+const UPDATED_AT = '2026年9月24日';
+
 function App() {
   const [text, setText] = useState('');
   const [currentStyle, setCurrentStyle] = useState('blue');
@@ -77,6 +80,7 @@ function App() {
   return (
     <div className="container">
       <h1>卡片生成器</h1>
+      <p className="update-date">更新于 {UPDATED_AT}</p>
       {saveMessage ? <p className="save-message">{saveMessage}</p> : null}
 
       <div className="workspace">

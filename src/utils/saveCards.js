@@ -91,12 +91,17 @@ async function resolveDirectory() {
   return pickDirectory();
 }
 
-function getDateSuffix() {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
+// 文件名取卡片内容的第一行，最多 20 个字
+function getCardFileName(card, index) {
+  const content = card.querySelector('.card-content');
+  const firstLine = (content ? content.textContent : '').split('\n')[0].trim();
+  const name = [...firstLine]
+    .slice(0, 20)
+    .join('')
+    .replace(/[\\/:*?"<>|]/g, '')
+    .trim();
 
-  return `${now.getFullYear()}-${month}-${day}`;
+  return `${name || `card_${index + 1}`}.png`;
 }
 
 function resolveBackgroundColor(card, fallback) {
@@ -148,11 +153,10 @@ export async function saveCards(cards, template) {
   const total = cards.length;
   const backgroundColor = CARD_BACKGROUNDS[template] || '#ffffff';
   let directory = supportsLocalDirectory() ? await resolveDirectory() : null;
-  const dateSuffix = getDateSuffix();
 
   for (let index = 0; index < cards.length; index++) {
     const blob = await renderCardImage(cards[index], backgroundColor);
-    const fileName = `card_${index + 1}_${dateSuffix}.png`;
+    const fileName = getCardFileName(cards[index], index);
 
     if (!directory) {
       downloadImage(blob, fileName);

@@ -12,6 +12,15 @@ h1 {
   letter-spacing: 0.04em;
 }
 
+/* 标题下方的更新日期：浅灰小字，负上边距让它贴近标题 */
+.update-date {
+  margin: -14px 0 20px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #a9a29a;
+}
+
 /* 悬浮提示：不参与布局，避免出现/消失时把页面内容挤动 */
 .save-message {
   position: fixed;
