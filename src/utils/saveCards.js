@@ -91,9 +91,9 @@ async function resolveDirectory() {
   return pickDirectory();
 }
 
-// 文件名取卡片内容的第一行，最多 20 个字
-function getCardFileName(card, index) {
-  const content = card.querySelector('.card-content');
+// 整批卡片共用一个名字：取第一张卡片内容的第一行，最多 20 个字
+function getBatchName(cards) {
+  const content = cards.length ? cards[0].querySelector('.card-content') : null;
   const firstLine = (content ? content.textContent : '').split('\n')[0].trim();
   const name = [...firstLine]
     .slice(0, 20)
@@ -101,7 +101,15 @@ function getCardFileName(card, index) {
     .replace(/[\\/:*?"<>|]/g, '')
     .trim();
 
-  return `${name || `card_${index + 1}`}.png`;
+  return name || 'card';
+}
+
+// 同一批卡片用同一个名字，后缀按顺序补零编号
+function getCardFileName(batchName, index, total) {
+  const digits = Math.max(String(total).length, 2);
+  const sequence = String(index + 1).padStart(digits, '0');
+
+  return `${batchName}_${sequence}.png`;
 }
 
 function resolveBackgroundColor(card, fallback) {
@@ -152,11 +160,13 @@ function downloadImage(blob, fileName) {
 export async function saveCards(cards, template) {
   const total = cards.length;
   const backgroundColor = CARD_BACKGROUNDS[template] || '#ffffff';
+  // 整批卡片共用同一个文件名（取第一张卡片内容的第一行）
+  const batchName = getBatchName(cards);
   let directory = supportsLocalDirectory() ? await resolveDirectory() : null;
 
   for (let index = 0; index < cards.length; index++) {
     const blob = await renderCardImage(cards[index], backgroundColor);
-    const fileName = getCardFileName(cards[index], index);
+    const fileName = getCardFileName(batchName, index, total);
 
     if (!directory) {
       downloadImage(blob, fileName);
