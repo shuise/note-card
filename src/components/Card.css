@@ -417,6 +417,21 @@
   font-size: 12px;
 }
 
+/* 正文里的链接换成二维码：单独占一行并居中，其余文字沿用 card-content 的排版 */
+.card .qr-block {
+  display: block;
+  width: 96px;
+  height: 96px;
+  margin: 12px auto;
+}
+
+.card .qr-block img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+}
+
 @media screen and (max-width: 768px) {
   .card.c1 {
     padding: 36px 28px 48px;

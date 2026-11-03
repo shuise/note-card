@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { seededRandom } from '../utils/content';
+import CardContent from './CardContent';
 import './Card.css';
 
 function Petal({ seed }) {
@@ -37,7 +38,7 @@ export default function C1Card({ content, index, style, date, backdropStyle }) {
       {petals.map((seed) => (
         <Petal key={seed} seed={seed} />
       ))}
-      <div className="card-content">{content}</div>
+      <CardContent content={content} />
       <div className="card-date">{date}</div>
     </div>
   );

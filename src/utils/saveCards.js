@@ -91,10 +91,32 @@ async function resolveDirectory() {
   return pickDirectory();
 }
 
-// 整批卡片共用一个名字：取第一张卡片内容的第一行，最多 20 个字
+// 整批卡片共用一个名字：取第一张卡片内容的第一行文字，最多 20 个字
+// 链接会被渲染成二维码（不含文字），所以取第一个文本片段的第一行，而不是整段 textContent
 function getBatchName(cards) {
   const content = cards.length ? cards[0].querySelector('.card-content') : null;
-  const firstLine = (content ? content.textContent : '').split('\n')[0].trim();
+  let firstLine = '';
+
+  if (content) {
+    const textSegments = Array.from(content.querySelectorAll('.card-text'));
+
+    for (const segment of textSegments) {
+      const line = segment.textContent
+        .split('\n')
+        .map((item) => item.trim())
+        .find(Boolean);
+
+      if (line) {
+        firstLine = line;
+        break;
+      }
+    }
+
+    if (!firstLine) {
+      firstLine = content.textContent.split('\n')[0].trim();
+    }
+  }
+
   const name = [...firstLine]
     .slice(0, 20)
     .join('')
@@ -120,6 +142,26 @@ function resolveBackgroundColor(card, fallback) {
   }
 
   return backgroundColor;
+}
+
+// 二维码是 img 位图，导出前先确认都解码完成，否则可能画出空白
+function waitForImages(card) {
+  const images = Array.from(card.querySelectorAll('img'));
+
+  return Promise.all(
+    images.map(
+      (image) =>
+        new Promise((resolve) => {
+          if (image.complete && image.naturalWidth > 0) {
+            resolve();
+            return;
+          }
+
+          image.addEventListener('load', resolve, { once: true });
+          image.addEventListener('error', resolve, { once: true });
+        })
+    )
+  );
 }
 
 async function renderCardImage(card, backgroundColor) {
@@ -165,6 +207,8 @@ export async function saveCards(cards, template) {
   let directory = supportsLocalDirectory() ? await resolveDirectory() : null;
 
   for (let index = 0; index < cards.length; index++) {
+    await waitForImages(cards[index]);
+
     const blob = await renderCardImage(cards[index], backgroundColor);
     const fileName = getCardFileName(batchName, index, total);
 

@@ -1,3 +1,4 @@
+import CardContent from './CardContent';
 import './Card.css';
 
 export default function C2Card({ content, date, sealText, backdropStyle }) {
@@ -19,7 +20,7 @@ export default function C2Card({ content, date, sealText, backdropStyle }) {
         <span />
       </div>
       <div className="c2-content-wrap">
-        <div className="card-content">{content}</div>
+        <CardContent content={content} />
       </div>
       <div className="c2-bamboo">
         <span />
